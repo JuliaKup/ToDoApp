@@ -26,3 +26,7 @@ def create_task(request):
 def detail(request, task_id):
 	t = get_object_or_404(Task, pk = task_id)
 	return render(request, 'tasks/detail.html', {'task': t})
+
+class IndexView:
+	template_name = 'tasks/index.html'
+	
