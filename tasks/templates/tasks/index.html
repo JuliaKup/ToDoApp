@@ -1,3 +1,11 @@
+<html>
+<head>
+    <title>Tasks</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+<div class="title"><h2>Tasks</h2></div>
+<a href="http://127.0.0.1:8000/tasks/create/">Create new task</a>
 {% if tasks_list %}
     <ul>
     {% for t in tasks_list %}
@@ -7,15 +15,5 @@
 {% else %}
     <p>No tasks are available.</p>
 {% endif %}
-<h1>{{ question.question_text }}</h1>
-
-{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
-
-<form action="create_task" method="post">
-{% csrf_token %}
-	<p><label for="title">Title:</label>
-    <input type="text" name="title" size="50"/></p>
-    <p><label for="description">Description:</label>
-    <input name="description" size="100"></p>
-<input type="submit" value="Add">
-</form>
+</body>
+</html>

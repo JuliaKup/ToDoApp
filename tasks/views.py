@@ -1,32 +1,48 @@
 from django.shortcuts import render, get_object_or_404
-
-# Create your views here.
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
-from .models import Task
-from django.http import Http404
-from .forms import TaskForm
+from django.views import generic
+from django.views.generic import TemplateView
 
-def index(request):
-	tasks_list = Task.objects.all()
-	template = loader.get_template('tasks/index.html')
-	context = {
-		'tasks_list': tasks_list,
-	}
-	return HttpResponse(template.render(context, request))
 
-def create_task(request):
-	if request.method == 'POST':
-		form = TaskForm(request.POST)
-		return HttpResponseRedirect('/')
-	else:
-		form = TaskForm()
-	return HttpResponseRedirect('/')
+from tasks.models import Task, User, Project, Comment
+from tasks.forms import TaskForm
 
-def detail(request, task_id):
-	t = get_object_or_404(Task, pk = task_id)
-	return render(request, 'tasks/detail.html', {'task': t})
-
-class IndexView:
+class IndexView(generic.ListView):
 	template_name = 'tasks/index.html'
-	
+	context_object_name = 'tasks_list'
+
+	def get_queryset(self):
+		return Task.objects.all()
+
+class DetailView(generic.DetailView):
+	model = Task
+	template_name = 'tasks/detail.html'
+
+
+class MyFormView(generic.FormView):
+	template_name = "tasks/create.html"
+	form_class = TaskForm
+	success_url = '/tasks/create/' #reverse_lazy('detail')
+
+
+	def form_valid(self, form):
+		form.save()
+		return super().form_valid(form)
+
+
+# def create(request):
+# 	#task = Task.objects.create(title = title, description = description)
+# 	#return render(request, 'tasks/detail.html', {'task': task})
+# 	if request.method == 'POST':
+# 		print('POST')
+# 		form = TaskForm(request.POST)
+# 		if form.is_valid():
+# 			title = form.cleaned_data['title']
+# 			description = form.cleaned_data['description']
+# 			print('Yey')
+# 			task = Task.objects.create(title = title, description = description)
+# 			return HttpResponseRedirect('tasks/index')
+# 	else:
+# 		form = TaskForm()
+# 	return render(request, 'tasks/create.html', {'form': form})
