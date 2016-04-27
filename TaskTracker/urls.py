@@ -23,4 +23,5 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^tasks/', include('tasks.urls')),
     url(r'^$', views.IndexView.as_view(), name='index'),
+    url(r'^login/', views.LoginView.as_view(), name='login'),
 ]  + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

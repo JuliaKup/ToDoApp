@@ -9,3 +9,11 @@ from tasks.forms import TaskForm
 
 class IndexView(TemplateView):
 	template_name = 'index.html'
+
+#class MyFormView(generic.FormView):
+#	template_name = "login.html"
+#	form_class = TaskForm
+#	success_url = '/'
+
+class LoginView(TemplateView):
+	template_name = 'login.html'
