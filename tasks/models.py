@@ -1,14 +1,8 @@
 from django.db import models
 from datetime import datetime
+from django.contrib.auth.models import User
 
 # Create your models here.
-
-class User(models.Model):
-	email = models.CharField(max_length=200)
-	password = models.CharField(max_length=200)
-
-	def __str__(self):
-		return self.email
 
 class Task(models.Model):
 	"""docstring for task"""
@@ -17,7 +11,7 @@ class Task(models.Model):
 	status = models.BooleanField(default=False)
 	#exp_time = models.DateTimeField(blank=True, default=datetime.now())
 	#project = models.ForeignKey(Project, on_delete=models.CASCADE, null=True)
-	#user = models.ForeignKey(User)#, on_delete=models.CASCADE, blank=False)
+	user = models.ForeignKey(User, on_delete=models.CASCADE, blank=False)
 
 	def __str__(self):
 		return self.title
@@ -31,8 +25,9 @@ class Project(models.Model):
 		return self.title
 
 class Comment(models.Model):
-	user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
-	date = models.DateTimeField(auto_now_add=True, blank=True)
+	user = models.ForeignKey(User, on_delete=models.CASCADE)
+	task = models.ForeignKey(Task, on_delete=models.CASCADE)
+	date = models.DateTimeField(auto_now_add=True, blank=False)
 	title = models.CharField(max_length=200)
 	text = models.CharField(max_length=1000)
 

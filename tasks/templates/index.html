@@ -8,9 +8,17 @@
 	<div class="menu"><ul>
     	<li><a href="/">TaskTracker</a></li>
     	<li><a href="/login/">Login</a></li>
-    	<li><a href="/">About us</a></li>
+    	<li><a href="/register/">Register</a></li>
+    	<li>
+    		<form method="post" action="/logout/">
+    			{% csrf_token %}
+    			<input type="hidden" name="next" value="{% url 'index' %}" />
+    			<input type="submit" value="Logout">
+    		</form>
+    	</li>
 	</ul></div>
 	<div class="header">
+		<h2>What hurts more, the pain of hard work or the pain of regret?</h2>
 		<h1>TaskTracker</h2>
 		<h3>Life is about the shit you do everyday.</h5>
 	</div>

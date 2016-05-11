@@ -1,6 +1,6 @@
 <html>
 <head>
-	<title>{{ task.title  }}</title>
+	<title>TaskTracker</title>
 	{% load staticfiles %}
 	<link rel="stylesheet" type="text/css" href="{% static "style.css" %}">
 </head>
@@ -17,15 +17,14 @@
     		</form>
     	</li>
 	</ul></div>
-<h1>{{ task.title  }}</h1>
-<p>{{ task.description }}</p>
-<div class = "registration"></div>
-    <form method="post" action="/comment/">
-        {% csrf_token %}
-        {{ commentform.title }}
-        {{ commentform.text  }}
-        <input type="submit" value="Comment">
-    </form>
-</div>
+	<div class="registration">
+		{% block content %}
+		<form action="/register/" method="post">
+			{% csrf_token %}
+			{{ form }}
+			<input type="submit" value="Register" id="submit">
+		</form>
+		{% endblock %}
+	</div>
 </body>
 </html>

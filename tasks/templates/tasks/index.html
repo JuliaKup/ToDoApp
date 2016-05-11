@@ -1,11 +1,24 @@
 <html>
 <head>
     <title>Tasks</title>
-    <link rel="stylesheet" type="text/css" href="style.css">
+    {% load staticfiles %}
+    <link rel="stylesheet" type="text/css" href="{% static "style.css" %}">
 </head>
 <body>
+	<div class="menu"><ul>
+    	<li><a href="/">TaskTracker</a></li>
+    	<li><a href="/login/">Login</a></li>
+    	<li><a href="/register/">Register</a></li>
+    	<li>
+    		<form method="post" action="/logout/">
+    			{% csrf_token %}
+    			<input type="hidden" name="next" value="{% url 'index' %}" />
+    			<input type="submit" value="Logout">
+    		</form>
+    	</li>
+	</ul></div>
 <div class="title"><h2>Tasks</h2></div>
-<a href="http://127.0.0.1:8000/tasks/create/">Create new task</a>
+<a href="/tasks/create/">Create new task</a>
 {% if tasks_list %}
     <ul>
     {% for t in tasks_list %}

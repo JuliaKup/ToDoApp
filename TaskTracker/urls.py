@@ -18,10 +18,14 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from TaskTracker import views
+from django.core.urlresolvers import reverse
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^tasks/', include('tasks.urls')),
-    url(r'^$', views.IndexView.as_view(), name='index'),
-    url(r'^login/', views.LoginView.as_view(), name='login'),
-]  + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    url(r'^$', views.index, name='index'),
+    url('^', include('django.contrib.auth.urls')),
+    url(r'^register/', views.RegisterView.as_view(model=User, get_success_url = lambda: reverse('tasks'), form_class=UserCreationForm, template_name="registration/register.html"), name='register'),
+]

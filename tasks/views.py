@@ -3,46 +3,68 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 from django.views import generic
 from django.views.generic import TemplateView
+from django.forms import inlineformset_factory
 
 
 from tasks.models import Task, User, Project, Comment
-from tasks.forms import TaskForm
+from django.contrib.auth.models import User
+from tasks.forms import TaskForm, CommentForm
 
-class IndexView(generic.ListView):
-	template_name = 'tasks/index.html'
-	context_object_name = 'tasks_list'
+def index(request):
+	if request.user.is_authenticated():
+		tasks = Task.objects.filter(user = request.user)
+		return render(request, 'tasks/index.html', {'tasks_list': tasks})
+	else:
+		return HttpResponseRedirect("/login/")	
 
-	def get_queryset(self):
-		return Task.objects.all()
+def detail(request, pk):
+	try:
+		task = Task.objects.get(pk=pk)
+	except Task.DoesNotExist:
+		return HttpResponseRedirect("/tasks/")
+	if request.user == task.user:
+		commentform = CommentForm()
+		context = {
+			'commentform': commentform,
+			'task': task,
+		}
+		return render(request, 'tasks/detail.html', context)
+	else:
+		return HttpResponseRedirect("/login/")
 
-class DetailView(generic.DetailView):
-	model = Task
-	template_name = 'tasks/detail.html'
+def comment(request, pk):
+	try:
+		task = Task.objects.get(pk=pk)
+	except Task.DoesNotExist:
+		return HttpResponseRedirect("/tasks/")
+	if request.user.is_authenticated():
+		if request.method == "POST":
+			form = CommentForm(request.POST)
+			if form.is_valid():
+				comment = form.save(commit=False)
+				comment.user = request.user
+				comment.task = task
+				comment.save()
+				return HttpResponseRedirect("/tasks/" + str(pk) + "/")
+		else:
+			commentform = CommentForm()
+		return HttpResponseRedirect("/tasks/" + str(pk) + "/")
+	else:
+		return HttpResponseRedirect("/login/")
 
 
-class MyFormView(generic.FormView):
-	template_name = "tasks/create.html"
-	form_class = TaskForm
-	success_url = '/tasks/create/' #reverse_lazy('detail')
+def create(request):
+	if request.user.is_authenticated():
+		if request.method == "POST":
+			form = TaskForm(request.POST)
+			if form.is_valid():
+				task = form.save(commit=False)
+				task.user = request.user
+				task.save()
+				return HttpResponseRedirect("/tasks/")
+		else:
+			form = TaskForm()
+		return render(request, 'tasks/create.html', {'form': form})
+	else:
+		return HttpResponseRedirect("/login/")
 
-
-	def form_valid(self, form):
-		form.save()
-		return super().form_valid(form)
-
-
-# def create(request):
-# 	#task = Task.objects.create(title = title, description = description)
-# 	#return render(request, 'tasks/detail.html', {'task': task})
-# 	if request.method == 'POST':
-# 		print('POST')
-# 		form = TaskForm(request.POST)
-# 		if form.is_valid():
-# 			title = form.cleaned_data['title']
-# 			description = form.cleaned_data['description']
-# 			print('Yey')
-# 			task = Task.objects.create(title = title, description = description)
-# 			return HttpResponseRedirect('tasks/index')
-# 	else:
-# 		form = TaskForm()
-# 	return render(request, 'tasks/create.html', {'form': form})
