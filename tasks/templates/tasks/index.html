@@ -3,6 +3,11 @@
     <title>Tasks</title>
     {% load staticfiles %}
     <link rel="stylesheet" type="text/css" href="{% static "style.css" %}">
+    <script type="text/javascript">
+        function submit() {
+            document.statusform.submit();
+        }
+    </script>
 </head>
 <body>
 	<div class="menu"><ul>
@@ -13,7 +18,7 @@
     		<form method="post" action="/logout/">
     			{% csrf_token %}
     			<input type="hidden" name="next" value="{% url 'index' %}" />
-    			<input type="submit" value="Logout">
+    			<input type="submit" value="Logout" id="submit">
     		</form>
     	</li>
 	</ul></div>
@@ -22,7 +27,18 @@
 {% if tasks_list %}
     <ul>
     {% for t in tasks_list %}
-        <li><a href="/tasks/{{ t.id }}/">{{ t.title }}</a></li>
+        <li>
+            <form name="statusform" id="form" method="post" action="/tasks/">
+                {% csrf_token %}
+                <input type="hidden" id="id_task_id" name="task_id" value="{{ t.id }}" />
+                {% if t.status %}
+                    <input id="id_status" type="checkbox" checked name="status" onClick="submit()">
+                {% else %}
+                    <input id="id_status" type="checkbox" name="status" onClick="submit()">
+                {% endif %}
+                <a href="/tasks/{{ t.id }}/">{{ t.title }}</a>
+            </form>
+        </li>
     {% endfor %}
     </ul>
 {% else %}

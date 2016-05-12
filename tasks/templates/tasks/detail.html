@@ -1,31 +1,41 @@
-<html>
-<head>
-	<title>{{ task.title  }}</title>
-	{% load staticfiles %}
-	<link rel="stylesheet" type="text/css" href="{% static "style.css" %}">
-</head>
-<body>
-	<div class="menu"><ul>
-    	<li><a href="/">TaskTracker</a></li>
-    	<li><a href="/login/">Login</a></li>
-    	<li><a href="/register/">Register</a></li>
-    	<li>
-    		<form method="post" action="/logout/">
-    			{% csrf_token %}
-    			<input type="hidden" name="next" value="{% url 'index' %}" />
-    			<input type="submit" value="Logout">
-    		</form>
-    	</li>
-	</ul></div>
-<h1>{{ task.title  }}</h1>
-<p>{{ task.description }}</p>
-<div class = "registration"></div>
-    <form method="post" action="/comment/">
-        {% csrf_token %}
-        {{ commentform.title }}
-        {{ commentform.text  }}
-        <input type="submit" value="Comment">
-    </form>
-</div>
-</body>
-</html>
+    <html>
+    <head>
+    	<title>{{ task.title  }}</title>
+    	{% load staticfiles %}
+    	<link rel="stylesheet" type="text/css" href="{% static "style.css" %}">
+    </head>
+    <body>
+    	<div class="menu"><ul>
+        	<li><a href="/">TaskTracker</a></li>
+        	<li><a href="/login/">Login</a></li>
+        	<li><a href="/register/">Register</a></li>
+        	<li>
+        		<form method="post" action="/logout/">
+        			{% csrf_token %}
+        			<input type="hidden" name="next" value="{% url 'index' %}" />
+        			<input type="submit" value="Logout" id="submit">
+        		</form>
+        	</li>
+    	</ul></div>
+    <h1>{{ task.title  }}</h1>
+    <p>{{ task.description }}</p>
+    <p>{{ task.due_time.date }}</p>
+    <div class = "registration">
+        <form method="post" action="">
+            {% csrf_token %}
+            <label>Title: </label>{{ commentform.title }}<br>
+            <label>Text: </label>{{ commentform.text  }}
+            <input type="submit" value="Comment" id="submit">
+        </form>
+    </div>
+    {% if comments %}
+    <ul>
+    {% for c in comments %}
+        <li><h3>{{ c.title }} {{ c.date }}</h3> {{ c.text }}</li>
+    {% endfor %}
+    </ul>
+    {% else %}
+        <p>No tasks are available.</p>
+    {% endif %}
+    </body>
+    </html>

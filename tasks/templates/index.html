@@ -13,7 +13,7 @@
     		<form method="post" action="/logout/">
     			{% csrf_token %}
     			<input type="hidden" name="next" value="{% url 'index' %}" />
-    			<input type="submit" value="Logout">
+    			<input type="submit" value="Logout" id="submit">
     		</form>
     	</li>
 	</ul></div>
