@@ -4,7 +4,7 @@ from django.template import loader
 from django.views import generic
 from django.views.generic import TemplateView
 from django.forms import inlineformset_factory
-
+from django.utils import timezone
 
 from tasks.models import Task, User, Project, Comment
 from django.contrib.auth.models import User
@@ -20,10 +20,12 @@ def index(request):
 				task.save()
 				return HttpResponseRedirect('/tasks/')
 		else:
-			tasks = Task.objects.filter(user = request.user)
+			tasks = Task.objects.filter(user = request.user).order_by('due_date')
+			projects = Project.objects.filter(user = request.user).order_by('due_date')
 			form = TaskStatusForm()
 			content = {
 				'tasks_list': tasks,
+				'projects_list': projects,
 				'form': form,
 			}
 			return render(request, 'tasks/index.html', content)
@@ -56,7 +58,6 @@ def detail(request, pk):
 	else:
 		return HttpResponseRedirect("/login/")
 
-
 def create(request):
 	if request.user.is_authenticated():
 		if request.method == "POST":
@@ -64,6 +65,7 @@ def create(request):
 			if form.is_valid():
 				task = form.save(commit=False)
 				task.user = request.user
+				task.creation_date = timezone.now()
 				task.save()
 				return HttpResponseRedirect("/tasks/")
 		else:

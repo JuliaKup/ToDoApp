@@ -28,4 +28,6 @@ urlpatterns = [
     url(r'^$', views.index, name='index'),
     url('^', include('django.contrib.auth.urls')),
     url(r'^register/', views.RegisterView.as_view(model=User, get_success_url = lambda: reverse('tasks'), form_class=UserCreationForm, template_name="registration/register.html"), name='register'),
+    url(r'^create_project/', views.create_project, name='create_project'),
+    url(r'^(?P<pk>[0-9]+)/$', views.project, name='project'),
 ]

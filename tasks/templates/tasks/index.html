@@ -24,7 +24,20 @@
 	</ul></div>
 <div class="title"><h2>Tasks</h2></div>
 <a href="/tasks/create/">Create new task</a>
+{% if projects_list %}
+    <h1>Projects</h1>
+    <ul>
+    {% for t in projects_list %}
+        <li>
+            <a href="/{{ t.id }}/">{{ t.title }}</a>
+        </li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No projects are available.</p>
+{% endif %}
 {% if tasks_list %}
+    <h1>Tasks</h1>
     <ul>
     {% for t in tasks_list %}
         <li>

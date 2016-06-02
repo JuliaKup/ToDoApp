@@ -4,22 +4,26 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 
-class Task(models.Model):
-	"""docstring for task"""
+class Project(models.Model):
 	title = models.CharField(max_length=200)
 	description = models.CharField(max_length=1000)
-	status = models.BooleanField(default=False)
-	due_date = models.DateTimeField(blank=True, default=None, null=True)
-	#project = models.ForeignKey(Project, on_delete=models.CASCADE, null=True)
 	user = models.ForeignKey(User, on_delete=models.CASCADE, blank=False)
+	creation_date = models.DateTimeField(blank=False, default=None)
+	due_date = models.DateTimeField(blank=True, default=None, null=True)
 
 	def __str__(self):
 		return self.title
 
-class Project(models.Model):
+class Task(models.Model):
+	"""docstring for task"""
 	title = models.CharField(max_length=200)
-	description = models.CharField(max_length=1000)
-	tasks = []  #list of tasks for that project # = models.ForeignKey(Question, on_delete=models.CASCADE)
+	description = models.CharField(max_length=1000, null=True)
+	status = models.BooleanField(default=False)
+	due_date = models.DateTimeField(blank=True, default=None, null=True)
+	creation_date = models.DateTimeField(blank=False, default=None)
+	project = models.ForeignKey(Project, on_delete=models.CASCADE, null=True)
+	user = models.ForeignKey(User, on_delete=models.CASCADE, blank=False, related_name='creators')
+	doer = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True, related_name='executors')
 
 	def __str__(self):
 		return self.title

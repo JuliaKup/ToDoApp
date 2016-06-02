@@ -1,0 +1,28 @@
+<html>
+<head>
+	<title>TaskTracker</title>
+	{% load staticfiles %}
+	<link rel="stylesheet" type="text/css" href="{% static "style.css" %}">
+</head>
+<body>
+	<div class="menu"><ul>
+    	<li><a href="/">TaskTracker</a></li>
+    	<li><a href="/login/">Login</a></li>
+    	<li><a href="/register/">Register</a></li>
+    	<li>
+    		<form method="post" action="/logout/">
+    			{% csrf_token %}
+    			<input type="hidden" name="next" value="{% url 'index' %}" />
+    			<input type="submit" value="Logout" id="submit">
+    		</form>
+    	</li>
+	</ul></div>
+	<div class="registration">
+		<form action="create_project" method="post">
+			{% csrf_token %}
+			{{ form }}
+    		<input type="submit" value="Add" id="submit">
+		</form>
+	</div>
+</body>
+</html>
