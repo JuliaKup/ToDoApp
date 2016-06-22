@@ -7,9 +7,10 @@ from django.contrib.auth.models import User
 class Project(models.Model):
 	title = models.CharField(max_length=200)
 	description = models.CharField(max_length=1000)
-	user = models.ForeignKey(User, on_delete=models.CASCADE, blank=False)
+	user = models.ForeignKey(User, on_delete=models.CASCADE, blank=False, related_name='teamlead')
 	creation_date = models.DateTimeField(blank=False, default=None)
 	due_date = models.DateTimeField(blank=True, default=None, null=True)
+	team = models.ManyToManyField(User, related_name='doers')
 
 	def __str__(self):
 		return self.title

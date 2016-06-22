@@ -96,3 +96,12 @@ a {
     background: rgb(255,140,0);
     color: white;
 }
+
+.content {
+    padding-top: 10%;
+    padding-left: 10%;
+}
+
+.content h1 {
+    color: black;
+}

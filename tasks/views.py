@@ -5,10 +5,11 @@ from django.views import generic
 from django.views.generic import TemplateView
 from django.forms import inlineformset_factory
 from django.utils import timezone
+from datetime import timedelta
 
 from tasks.models import Task, User, Project, Comment
 from django.contrib.auth.models import User
-from tasks.forms import TaskForm, CommentForm, TaskStatusForm
+from tasks.forms import TaskForm, CommentForm, TaskStatusForm, RemoveTaskForm
 
 def index(request):
 	if request.user.is_authenticated():
@@ -20,13 +21,17 @@ def index(request):
 				task.save()
 				return HttpResponseRedirect('/tasks/')
 		else:
-			tasks = Task.objects.filter(user = request.user).order_by('due_date')
+			overdue = Task.objects.filter(user = request.user, status = False).exclude(due_date__gt=timezone.now()).order_by('due_date')
+			week_tasks = Task.objects.filter(user = request.user, due_date__range=[timezone.now().date(), timezone.now().date() + timedelta(days = 7)], status=False).order_by('due_date')
+			taskswpr = Task.objects.filter(user = request.user, project=None, status = False).order_by('due_date')
 			projects = Project.objects.filter(user = request.user).order_by('due_date')
 			form = TaskStatusForm()
 			content = {
-				'tasks_list': tasks,
+				'overdue_list': overdue,
+				'tasks_list': week_tasks,
 				'projects_list': projects,
 				'form': form,
+				'out_tasks': taskswpr,
 			}
 			return render(request, 'tasks/index.html', content)
 	else:
@@ -47,9 +52,11 @@ def detail(request, pk):
 				comment.save()
 				return HttpResponseRedirect("/tasks/" + str(pk) + "/")
 		else:
+			removetaskform = RemoveTaskForm()
 			commentform = CommentForm()
 			comments = Comment.objects.filter(task = task)
 			context = {
+				'removetaskform': removetaskform,
 				'commentform': commentform,
 				'task': task,
 				'comments': comments,
@@ -73,4 +80,16 @@ def create(request):
 		return render(request, 'tasks/create.html', {'form': form})
 	else:
 		return HttpResponseRedirect("/login/")
+
+def remove_task(request):
+	if request.user.is_authenticated():
+		if request.method == 'POST':
+			form = RemoveTaskForm(request.POST)
+			if form.is_valid():
+				task = Task.objects.get(pk = form.cleaned_data['task_id'])
+				if request.user == task.user:
+					task.delete()
+				else:
+					return HttpResponseRedirect("/login/")
+				return HttpResponseRedirect("/tasks/")
 

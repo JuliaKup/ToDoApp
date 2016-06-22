@@ -30,6 +30,21 @@ a {
 	text-decoration: underline;
 }
 
+.menu #submit {
+    margin: 0;
+    padding: 0;
+    background: rgb(255,140,0);
+    color: white;
+    border: 0;
+    font-family: Times;
+    font-size: 16;
+    cursor:pointer;
+}
+
+.menu #submit:hover{
+    text-decoration: underline;
+}
+
 .header {
     margin: 0;
     background-image: url(lamp_in_a_hand.jpg);

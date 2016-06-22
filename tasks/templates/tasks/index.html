@@ -22,40 +22,78 @@
     		</form>
     	</li>
 	</ul></div>
-<div class="title"><h2>Tasks</h2></div>
-<a href="/tasks/create/">Create new task</a>
-{% if projects_list %}
-    <h1>Projects</h1>
-    <ul>
-    {% for t in projects_list %}
-        <li>
-            <a href="/{{ t.id }}/">{{ t.title }}</a>
-        </li>
-    {% endfor %}
-    </ul>
-{% else %}
-    <p>No projects are available.</p>
-{% endif %}
-{% if tasks_list %}
-    <h1>Tasks</h1>
-    <ul>
-    {% for t in tasks_list %}
-        <li>
-            <form name="statusform" id="form" method="post" action="/tasks/">
-                {% csrf_token %}
-                <input type="hidden" id="id_task_id" name="task_id" value="{{ t.id }}" />
-                {% if t.status %}
-                    <input id="id_status" type="checkbox" checked name="status" onClick="submit()">
-                {% else %}
-                    <input id="id_status" type="checkbox" name="status" onClick="submit()">
-                {% endif %}
-                <a href="/tasks/{{ t.id }}/">{{ t.title }}</a>
-            </form>
-        </li>
-    {% endfor %}
-    </ul>
-{% else %}
-    <p>No tasks are available.</p>
-{% endif %}
+<div class = "content">
+    <a href="/tasks/create/">Create new task</a><br><br>
+    <a href="/create_project/">Create new project</a>
+    {% if overdue_list %}
+        <h1>Overdue</h1>
+        <ul>
+        {% for t in overdue_list %}
+            <li>
+                <form name="statusform" id="form" method="post" action="/tasks/">
+                    {% csrf_token %}
+                    <input type="hidden" id="id_task_id" name="task_id" value="{{ t.id }}" />
+                    {% if t.status %}
+                        <input id="id_status" type="checkbox" checked name="status" onClick="submit()">
+                    {% else %}
+                        <input id="id_status" type="checkbox" name="status" onClick="submit()">
+                    {% endif %}
+                    <a href="/tasks/{{ t.id }}/">{{ t.title }}</a> {{ t.due_date }}
+                </form>
+            </li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+    {% if projects_list %}
+        <h1>Projects</h1>
+        <ul>
+        {% for t in projects_list %}
+            <li>
+                <a href="/{{ t.id }}/">{{ t.title }}</a> {{ t.due_date }}
+            </li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+    {% if tasks_list %}
+        <h1>Tasks for this week</h1>
+        <ul>
+        {% for t in tasks_list %}
+            <li>
+                <form name="statusform" id="form" method="post" action="/tasks/">
+                    {% csrf_token %}
+                    <input type="hidden" id="id_task_id" name="task_id" value="{{ t.id }}" />
+                    {% if t.status %}
+                        <input id="id_status" type="checkbox" checked name="status" onClick="submit()">
+                    {% else %}
+                        <input id="id_status" type="checkbox" name="status" onClick="submit()">
+                    {% endif %}
+                    <a href="/tasks/{{ t.id }}/">{{ t.title }}</a> {{ t.due_date }}
+                </form>
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No tasks are available for this week.</p>
+    {% endif %}
+    {% if out_tasks %}
+        <h1>Tasks without projects</h1>
+        <ul>
+        {% for t in out_tasks %}
+            <li>
+                <form name="statusform" id="form" method="post" action="/tasks/">
+                    {% csrf_token %}
+                    <input type="hidden" id="id_task_id" name="task_id" value="{{ t.id }}" />
+                    {% if t.status %}
+                        <input id="id_status" type="checkbox" checked name="status" onClick="submit()">
+                    {% else %}
+                        <input id="id_status" type="checkbox" name="status" onClick="submit()">
+                    {% endif %}
+                    <a href="/tasks/{{ t.id }}/">{{ t.title }}</a> {{ t.due_date }}
+                </form>
+            </li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+</div>
 </body>
 </html>

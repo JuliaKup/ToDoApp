@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 
 from tasks.models import Task, Project, Comment
-from tasks.forms import TaskForm, ProjectForm
+from tasks.forms import TaskForm, ProjectForm, RemoveTaskForm
 
 def index(request):
 	if request.user.is_authenticated():
@@ -57,7 +57,7 @@ def project(request, pk):
 		project = Project.objects.get(pk=pk)
 	except Project.DoesNotExist:
 		return HttpResponseRedirect("/tasks/")
-	if request.user == project.user:
+	if request.user == project.user:  # or request.user in project.team:
 		if request.method == "POST":
 			form = TaskForm(request.POST)
 			if form.is_valid():
@@ -66,7 +66,7 @@ def project(request, pk):
 				task.project = project
 				task.creation_date = timezone.now()
 				task.save()
-				return HttpResponseRedirect("/tasks/")
+				return HttpResponseRedirect("/%s/" % pk)
 		else:
 			tasks = Task.objects.filter(project = project).order_by('due_date')
 			form = TaskForm()
@@ -78,4 +78,16 @@ def project(request, pk):
 			return render(request, 'project.html', context)
 	else:
 		return HttpResponseRedirect("/login/")
+
+def remove_project(request):
+	if request.user.is_authenticated():
+		if request.method == 'POST':
+			form = RemoveTaskForm(request.POST)
+			if form.is_valid():
+				project = Project.objects.get(pk = form.cleaned_data['task_id'])
+				if request.user == project.user:
+					project.delete()
+				else:
+					return HttpResponseRedirect("/login/")
+				return HttpResponseRedirect("/tasks/")
 

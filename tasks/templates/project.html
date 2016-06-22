@@ -17,19 +17,26 @@
         		</form>
         	</li>
     	</ul></div>
-    <h1>{{ project.title  }}</h1>
-    <p>{{ project.description }}</p>
-    <p>{{ task.due_time.date }}</p>
+    <div class="content">
+        <h1>{{ project.title  }}</h1>
+        <p>{{ project.description }}</p>
+        <p>{{ task.due_time.date }}</p>
+        <form name="RemoveTaskForm" id="form" method="post" action="/remove_project/">
+            {% csrf_token %}
+            <input type="hidden" id="id_task_id" name="task_id" value="{{ project.id }}" />
+            <input type="submit" value="Delete Project" id="submit">
+        </form>
+
+        {% if tasks_list %}
+        <ul>
+            {% for c in tasks_list %}
+                <li><h3>{{ c.title }}<br> {% if c.due_date %} {{ c.due_date }} {% endif %}</h3> {{ c.description }}</li>
+            {% endfor %}
+        </ul>
+        {% else %}
+            <p>No tasks are available.</p>
+        {% endif %}
     </div>
-    {% if tasks_list %}
-    <ul>
-        {% for c in tasks_list %}
-            <li><h3>{{ c.title }}<br> {% if c.due_date %} {{ c.due_date }} {% endif %}</h3> {{ c.description }}</li>
-        {% endfor %}
-    </ul>
-    {% else %}
-        <p>No tasks are available.</p>
-    {% endif %}
     <div class="registration">
         <form method="post" action="">
             {% csrf_token %}

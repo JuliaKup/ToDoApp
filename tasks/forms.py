@@ -18,7 +18,11 @@ class CommentForm(forms.ModelForm):
 class TaskStatusForm(forms.Form):
 	task_id = forms.IntegerField(required=True)
 
+class RemoveTaskForm(forms.Form):
+	task_id = forms.IntegerField(required=True)
+
 class ProjectForm(forms.ModelForm):
+	due_date = forms.DateTimeField(required=False, widget=SelectDateWidget)
 	class Meta:
 		model = Project
-		fields = fields = ['title', 'description']
+		fields = ['title', 'description', 'due_date', 'team']
